@@ -45,6 +45,7 @@ class Config():
         self.LOCATION_ID = global_config.getRaw('detail', 'location_id')
         self.CHANNEL_ID = global_config.getRaw('detail', 'channel_id')
         self.SEARCH_URL = global_config.getRaw('detail', 'search_url')
+        self.START_PAGE = global_config.getRaw('detail', 'start_page')
         assert self.SEARCH_URL == '' or self.SEARCH_URL.endswith('p'), 'search_url 没有拼接p'
         self.NEED_FIRST = True if global_config.getRaw('detail', 'need_first') == 'True' else False
         try:
