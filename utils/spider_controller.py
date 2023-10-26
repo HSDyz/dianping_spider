@@ -1,24 +1,6 @@
 # -*- coding:utf-8 -*-
 
-"""
-      ┏┛ ┻━━━━━┛ ┻┓
-      ┃　　　　　　 ┃
-      ┃　　　━　　　┃
-      ┃　┳┛　  ┗┳　┃
-      ┃　　　　　　 ┃
-      ┃　　　┻　　　┃
-      ┃　　　　　　 ┃
-      ┗━┓　　　┏━━━┛
-        ┃　　　┃   神兽保佑
-        ┃　　　┃   代码无BUG！
-        ┃　　　┗━━━━━━━━━┓
-        ┃CREATE BY SNIPER┣┓
-        ┃　　　　         ┏┛
-        ┗━┓ ┓ ┏━━━┳ ┓ ┏━┛
-          ┃ ┫ ┫   ┃ ┫ ┫
-          ┗━┻━┛   ┗━┻━┛
 
-"""
 from tqdm import tqdm
 
 from function.search import Search
@@ -46,7 +28,7 @@ class Controller():
             channel_id = spider_config.CHANNEL_ID
             city_id = spider_config.LOCATION_ID
             self.base_url = 'http://www.dianping.com/search/keyword/' + str(city_id) + '/' + str(
-                channel_id) + '_' + str(keyword) + '/p'
+                channel_id) + '_' + str(keyword)  + '/p'
             pass
         else:
             # 末尾加一个任意字符，为了适配两种初始化url切割长度
@@ -60,7 +42,11 @@ class Controller():
         # Todo  其实这里挺犹豫是爬取完搜索直接详情还是爬一段详情一段
         #       本着稀释同类型访问频率的原则，暂时采用爬一段详情一段
         # 调用搜索
-        for page in tqdm(range(1, spider_config.NEED_SEARCH_PAGES + 1), desc='搜索页数'):
+        #  开始页数start page
+        start_page = int(spider_config.START_PAGE)
+        end_page = spider_config.NEED_SEARCH_PAGES
+        result = start_page + end_page
+        for page in tqdm(range(start_page, result), desc='搜索页数'):
             # 拼凑url
             search_url, request_type = self.get_search_url(page)
             """
@@ -81,6 +67,7 @@ class Controller():
             """
             search_res = self.s.search(search_url, request_type)
             # search方法如果返回None，代表页面已经没有数据了
+
             if not search_res:
                 break
 
@@ -211,8 +198,8 @@ class Controller():
 
 
                 self.saver(each_search_res, each_review_res)
-            # 如果这一页数据小于15，代表下一页已经没有数据了，直接退出
-            if len(search_res) < 15:
+            # 如果这一页数据小于5，代表下一页已经没有数据了，直接退出
+            if len(search_res) < 5:
                 break
 
     def get_review(self, shop_id, detail=False):
